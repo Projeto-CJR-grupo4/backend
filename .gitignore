@@ -23,3 +23,12 @@
 
 # Operating system
 .DS_Store
+/generated/prisma
+
+.env
+*.db
+src/generated
+.agents
+.claude
+.windsurf
+skills-lock.json
