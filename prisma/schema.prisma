@@ -22,3 +22,22 @@ model User {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 }
+
+model Categories {
+  id                  Int       @id @default(autoincrement())
+  name                String    
+  parent_category_id  Int?
+}
+
+model Stores {
+  id            Int      @id @default(autoincrement())
+  user_id       Int
+  category_id   Int
+  name          String
+  description   String?
+  logo_url      String?
+  banner_url    String?
+  sticker_url   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
