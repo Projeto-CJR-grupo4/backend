@@ -64,7 +64,7 @@ model Product {
 }
 
 model ProductImages {
-  id            Int     @id @default(now())
+  id            Int     @id @default(autoincrement())
   product_id    Int
   image_url     String
   order         Int
