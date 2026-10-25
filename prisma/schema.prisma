@@ -23,6 +23,15 @@ model User {
   updatedAt           DateTime @updatedAt
 }
 
+model PasswordReset {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  code        String
+  expiresAt   DateTime
+  used        Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+}
+
 model Categories {
   id                  Int       @id @default(autoincrement())
   name                String    
@@ -60,5 +69,16 @@ model ProductImages {
   image_url     String
   order         Int
 }
+
+model StoreRating {
+  id          Int        @id @default(autoincrement())
+  user_id     Int
+  store_id    Int
+  rating      Int
+  comment     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
 
 
