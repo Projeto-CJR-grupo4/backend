@@ -1,5 +1,6 @@
 import {
   Controller,
+  Get,
   Post,
   Req,
   UseGuards,
@@ -9,6 +10,7 @@ import {
 
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 type AuthenticatedRequest = {
   user: {
@@ -27,5 +29,11 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   login(@Req() req: AuthenticatedRequest) {
     return this.authService.login(req.user);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Req() req: AuthenticatedRequest) {
+    return req.user;
   }
 }
