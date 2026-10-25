@@ -21,6 +21,14 @@ model User {
   profile_picture_url String?
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+  stores Stores[]
+
+  passwordResets PasswordReset[]
+
+  storeRatings StoreRating[]
+
+  productRatings  ProductRatings[]
 }
 
 model PasswordReset {
@@ -30,12 +38,23 @@ model PasswordReset {
   expiresAt   DateTime
   used        Boolean   @default(false)
   createdAt   DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id])
 }
 
 model Categories {
   id                  Int       @id @default(autoincrement())
   name                String    
   parent_category_id  Int?
+
+  parent   Categories?  @relation("CategoryHierarchy", fields: [parent_category_id], references: [id])
+  children Categories[] @relation("CategoryHierarchy")
+
+  store Stores[]
+
+  products Product[]
+
+  images ProductImages[]
 }
 
 model Stores {
@@ -49,6 +68,14 @@ model Stores {
   sticker_url   String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+
+  category Categories @relation(fields: [category_id], references: [id])
+
+  products Product[]
+
+  ratings StoreRating[]
 }
 
 model Product {
@@ -57,10 +84,16 @@ model Product {
   category_id   Int
   name          String
   description   String?
-  price         Decimal
+  price         Decimal     @db.Decimal(8, 2)
   stock         Int
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  store Stores @relation(fields: [store_id], references: [id])
+
+  category Categories @relation(fields: [category_id], references: [id])
+
+  productRatings ProductRatings[]
 }
 
 model ProductImages {
@@ -68,6 +101,8 @@ model ProductImages {
   product_id    Int
   image_url     String
   order         Int
+
+  product Product @relation(fields: [product_id], references: [id])
 }
 
 model StoreRating {
@@ -78,6 +113,10 @@ model StoreRating {
   comment     String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+  user User @relation(fields: [user_id], references: [id])
+
+  store Stores @relation(fields: [store_id], references: [id])
 }
 
 model ProductRatings {
@@ -88,16 +127,28 @@ model ProductRatings {
   comment     String?
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
+
+
+  user    Users    @relation(fields: [user_id], references: [id])
+  product Products @relation(fields: [product_id], references: [id])
+
+  comments RatingComments[]
 }
 
 model RatingComments {
-  id                  Int
+  id                  Int      @id @default(autoincrement())
   user_id             Int
   store_rating_id     Int
   product_rating_id   Int
   content             String
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
+
+    user Users @relation(fields: [user_id], references: [id])
+
+  storeRating StoreRatings? @relation(fields: [store_rating_id], references: [id])
+
+  productRating ProductRatings? @relation(fields: [product_rating_id], references: [id])
 }
 
 
