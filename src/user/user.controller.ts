@@ -25,8 +25,6 @@ export class UserController {
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.userService.findOne(id);
   }
-
-  @Patch(':id')
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(

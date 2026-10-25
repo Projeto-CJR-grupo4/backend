@@ -23,8 +23,8 @@ export class CreateUserDto {
   @IsString()
   @MinLength(8)
   @MaxLength(20)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'password too weak',
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*(?:\d|[^\w\s]))\S+$/, {
+    message: 'A senha deve conter letras maiúsculas, minúsculas e pelo menos um número ou símbolo, sem espaços.',
   })
   password: string;
 }

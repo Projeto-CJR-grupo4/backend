@@ -122,35 +122,47 @@ export class UserService {
   }
 
   async remove(id: number) {
-  try {
-    return await this.prisma.user.delete({
-      where: {
-        id: id,
-      },
+    try {
+      return await this.prisma.user.delete({
+        where: {
+          id: id,
+        },
 
-      select: {
-        id: true,
-        name: true,
-        username: true,
-        email: true,
-      },
-    });
-  } catch (error) {
-    if (
-      error instanceof Prisma.PrismaClientKnownRequestError &&
-      error.code === 'P2025'
-    ) {
-      throw new NotFoundException('Usuário não encontrado.');
+        select: {
+          id: true,
+          name: true,
+          username: true,
+          email: true,
+        },
+      });
+    } catch (error) {
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2025'
+      ) {
+        throw new NotFoundException('Usuário não encontrado.');
+      }
+
+      throw error;
     }
-
-    throw error;
   }
-}
 
   findByEmail(email: string) {
     return this.prisma.user.findUnique({
       where: {
         email: email,
+      },
+    });
+  }
+  findByIdForAuth(id: number) {
+    return this.prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
       },
     });
   }
