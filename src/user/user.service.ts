@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
@@ -45,13 +45,42 @@ export class UserService {
     }
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findAll() {
+  return await this.prisma.user.findMany({
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      email: true,
+      profile_picture_url: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+}
+
+  async findOne(id: number) {
+  const user = await this.prisma.user.findUnique({
+    where: {
+      id: id,
+    },
+    select: {
+      id: true,
+      name: true,
+      username: true,
+      email: true,
+      profile_picture_url: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!user) {
+    throw new NotFoundException('Usuário não encontrado.');
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  return user;
+}
 
   update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
