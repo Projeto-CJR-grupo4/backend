@@ -121,9 +121,31 @@ export class UserService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+  try {
+    return await this.prisma.user.delete({
+      where: {
+        id: id,
+      },
+
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+      },
+    });
+  } catch (error) {
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2025'
+    ) {
+      throw new NotFoundException('Usuário não encontrado.');
+    }
+
+    throw error;
   }
+}
 
   findByEmail(email: string) {
     return this.prisma.user.findUnique({

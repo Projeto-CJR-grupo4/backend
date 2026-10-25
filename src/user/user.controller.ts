@@ -43,8 +43,18 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: { user: { id: number } },
+  ) {
+    if (req.user.id !== id) {
+      throw new ForbiddenException(
+        'Você só pode excluir sua própria conta.',
+      );
+    }
+
+    return this.userService.remove(id);
   }
 }
