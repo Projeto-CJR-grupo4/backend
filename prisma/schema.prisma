@@ -80,5 +80,25 @@ model StoreRating {
   updatedAt   DateTime   @updatedAt
 }
 
+model ProductRatings {
+  id          Int        @id @default(autoincrement())
+  user_id     Int
+  product_id  Int
+  rating      Int
+  comment     String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model RatingComments {
+  id                  Int
+  user_id             Int
+  store_rating_id     Int
+  product_rating_id   Int
+  content             String
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+}
+
 
 
