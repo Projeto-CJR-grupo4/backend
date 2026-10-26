@@ -22,7 +22,16 @@ export class UserController {
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
+  findOne(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: { user: { id: number } },
+  ) {
+    if (req.user.id !== id) {
+      throw new ForbiddenException(
+        'Você só pode consultar sua própria conta.',
+      );
+    }
+
     return this.userService.findOne(id);
   }
   @UseGuards(JwtAuthGuard)
