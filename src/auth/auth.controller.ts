@@ -10,7 +10,7 @@ import {
 
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { IsPublic } from './decorators/is-public.decorator';
 
 type AuthenticatedRequest = {
   user: {
@@ -20,10 +20,11 @@ type AuthenticatedRequest = {
   };
 };
 
-@Controller('auth')
+@Controller()
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
+  @IsPublic()
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(HttpStatus.OK)
@@ -31,8 +32,7 @@ export class AuthController {
     return this.authService.login(req.user);
   }
 
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
+  @Get('auth/profile')
   getProfile(@Req() req: AuthenticatedRequest) {
     return req.user;
   }
