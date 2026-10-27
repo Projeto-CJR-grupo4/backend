@@ -14,6 +14,12 @@ import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
     UserModule,
     AuthModule,
   ],
+import { CategoriasModule } from './categorias/categorias.module';
+import { LojasModule } from './lojas/lojas.module';
+import { ProdutosModule } from './produtos/produtos.module';
+
+@Module({
+  imports: [PrismaModule, CategoriasModule, LojasModule, ProdutosModule],
   controllers: [AppController],
   providers: [
   AppService,
