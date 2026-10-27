@@ -1,7 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
-
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -32,15 +31,6 @@ export class UserService {
         },
       });
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2002'
-      ) {
-        throw new ConflictException(
-          'E-mail ou nome de usuário já cadastrado.',
-        );
-      }
-
       throw error;
     }
   }
@@ -101,17 +91,6 @@ export class UserService {
         },
       });
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        if (error.code === 'P2025') {
-          throw new NotFoundException('Usuário não encontrado.');
-        }
-
-        if (error.code === 'P2002') {
-          throw new ConflictException(
-            'E-mail ou nome de usuário já cadastrado.',
-          );
-        }
-      }
 
       throw error;
     }
@@ -132,12 +111,6 @@ export class UserService {
         },
       });
     } catch (error) {
-      if (
-        error instanceof Prisma.PrismaClientKnownRequestError &&
-        error.code === 'P2025'
-      ) {
-        throw new NotFoundException('Usuário não encontrado.');
-      }
 
       throw error;
     }
