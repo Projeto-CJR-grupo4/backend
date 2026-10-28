@@ -3,25 +3,25 @@ import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-va
 export class CreateProdutoDto {
     @IsNotEmpty()
     @IsString()
-    nome: string;
+    name: string;
 
     @IsOptional()
     @IsString()
-    descricao?: string;
+    description?: string;
 
     @IsNumber()
     @Min(0)
-    preco: number;
+    price: number;
 
     @IsInt()
     @Min(0)
     @IsOptional()
-    estoque?: number;
+    stock: number;
 
     @IsInt()
-    lojaId: number;
+    store_id: number;
 
     @IsInt()
-    categoriaId: number;
+    category_id: number;
 }
 

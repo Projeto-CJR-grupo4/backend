@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,6 +6,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
   id                  Int      @id @default(autoincrement())
   username            String   @unique
@@ -22,134 +17,122 @@ model User {
   createdAt           DateTime @default(now())
   updatedAt           DateTime @updatedAt
 
-  stores Stores[]
-
-  passwordResets PasswordReset[]
-
-  storeRatings StoreRating[]
-
+  stores          Stores[]
+  passwordResets  PasswordReset[]
+  storeRatings    StoreRating[]
   productRatings  ProductRatings[]
+  ratingComments  RatingComments[]
 }
 
 model PasswordReset {
-  id          Int       @id @default(autoincrement())
-  userId      Int
-  code        String
-  expiresAt   DateTime
-  used        Boolean   @default(false)
-  createdAt   DateTime  @default(now())
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  code      String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
 }
 
 model Categories {
-  id                  Int       @id @default(autoincrement())
-  name                String    
-  parent_category_id  Int?
+  id                 Int     @id @default(autoincrement())
+  name               String
+  parent_category_id Int?
 
   parent   Categories?  @relation("CategoryHierarchy", fields: [parent_category_id], references: [id])
   children Categories[] @relation("CategoryHierarchy")
 
-  store Stores[]
-
+  store    Stores[]
   products Product[]
-
-  images ProductImages[]
 }
 
 model Stores {
-  id            Int      @id @default(autoincrement())
-  user_id       Int
-  category_id   Int
-  name          String
-  description   String?
-  logo_url      String?
-  banner_url    String?
-  sticker_url   String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  user_id     Int
+  category_id Int
+  name        String
+  description String?
+  logo_url    String?
+  banner_url  String?
+  sticker_url String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  user User @relation(fields: [user_id], references: [id])
-
+  user     User       @relation(fields: [user_id], references: [id])
   category Categories @relation(fields: [category_id], references: [id])
 
   products Product[]
-
-  ratings StoreRating[]
+  ratings  StoreRating[]
 }
 
 model Product {
-  id            Int         @id @default(autoincrement())
-  store_id      Int
-  category_id   Int
-  name          String
-  description   String?
-  price         Decimal     @db.Decimal(8, 2)
-  stock         Int
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
+  id          Int      @id @default(autoincrement())
+  store_id    Int
+  category_id Int
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(8, 2)
+  stock       Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  store Stores @relation(fields: [store_id], references: [id])
-
+  store    Stores     @relation(fields: [store_id], references: [id])
   category Categories @relation(fields: [category_id], references: [id])
 
+  images         ProductImages[]
   productRatings ProductRatings[]
 }
 
 model ProductImages {
-  id            Int     @id @default(autoincrement())
-  product_id    Int
-  image_url     String
-  order         Int
+  id         Int    @id @default(autoincrement())
+  product_id Int
+  image_url  String
+  order      Int
 
   product Product @relation(fields: [product_id], references: [id])
 }
 
 model StoreRating {
-  id          Int        @id @default(autoincrement())
-  user_id     Int
-  store_id    Int
-  rating      Int
-  comment     String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id        Int      @id @default(autoincrement())
+  user_id   Int
+  store_id  Int
+  rating    Int
+  comment   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user User @relation(fields: [user_id], references: [id])
-
+  user  User   @relation(fields: [user_id], references: [id])
   store Stores @relation(fields: [store_id], references: [id])
+
+  comments RatingComments[]
 }
 
 model ProductRatings {
-  id          Int        @id @default(autoincrement())
-  user_id     Int
-  product_id  Int
-  rating      Int
-  comment     String?
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  product_id Int
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-
-  user    Users    @relation(fields: [user_id], references: [id])
-  product Products @relation(fields: [product_id], references: [id])
+  user    User    @relation(fields: [user_id], references: [id])
+  product Product @relation(fields: [product_id], references: [id])
 
   comments RatingComments[]
 }
 
 model RatingComments {
-  id                  Int      @id @default(autoincrement())
-  user_id             Int
-  store_rating_id     Int
-  product_rating_id   Int
-  content             String
-  createdAt           DateTime @default(now())
-  updatedAt           DateTime @updatedAt
+  id                Int      @id @default(autoincrement())
+  user_id           Int
+  store_rating_id   Int?
+  product_rating_id Int?
+  content           String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-    user Users @relation(fields: [user_id], references: [id])
-
-  storeRating StoreRatings? @relation(fields: [store_rating_id], references: [id])
-
+  user          User            @relation(fields: [user_id], references: [id])
+  storeRating   StoreRating?    @relation(fields: [store_rating_id], references: [id])
   productRating ProductRatings? @relation(fields: [product_rating_id], references: [id])
 }
-
-
-
