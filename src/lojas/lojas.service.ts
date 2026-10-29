@@ -7,26 +7,26 @@ import { UpdateLojaDto } from './dto/update-loja.dto';
 export class LojasService {
   constructor(private prisma: PrismaService) {}
   create(dto: CreateLojaDto) {
-    return this.prisma.loja.create({ data: dto });
+    return this.prisma.stores.create({ data: dto });
   }
 
   findAll() {
-    return this.prisma.loja.findMany();
+    return this.prisma.stores.findMany();
   }
 
   async findOne(id: number) {
-    const loja = await this.prisma.loja.findUnique({ where: { id }, include: { produtos: true } });
+    const loja = await this.prisma.stores.findUnique({ where: { id }, include: { products: true } });
     if (!loja) { throw new NotFoundException(`Loja ${id} não encontrada`);}
     return loja;
   }
 
   async update(id: number, dto: UpdateLojaDto) {
     await this.findOne(id);
-    return this.prisma.loja.update({ where: { id }, data: dto });
+    return this.prisma.stores.update({ where: { id }, data: dto });
   }
 
   async remove(id: number) {
     await this.findOne(id);
-    return this.prisma.loja.delete({ where: { id } });
+    return this.prisma.stores.delete({ where: { id } });
   }
 }

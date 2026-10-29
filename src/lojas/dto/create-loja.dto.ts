@@ -1,11 +1,19 @@
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsInt, Min } from 'class-validator';
 
 export class CreateLojaDto {
     @IsNotEmpty()
     @IsString()
-    nome: string;
+    name!: string;
 
     @IsOptional()
     @IsString()
-    descricao?: string;
+    description?: string;
+
+    @IsInt()
+    @Min(1)
+    user_id!: number;
+
+    @IsInt()
+    @Min(1)
+    category_id!: number;
 }
