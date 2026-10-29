@@ -7,28 +7,34 @@ import { UpdateCategoriaDto } from './dto/update-categoria.dto';
 export class CategoriasService {
   constructor(private prisma: PrismaService) {}
   create(dto: CreateCategoriaDto) {
-    return this.prisma.categoria.create({ data: dto });
+    return this.prisma.categories.create({ data: dto });
   }
 
   findAll() {
-    return this.prisma.categoria.findMany();
+    return this.prisma.categories.findMany();
   }
 
   async findOne(id: number) {
-    const categoria = await this.prisma.categoria.findUnique({ where: { id } });
+    const categoria = await this.prisma.categories.findUnique({ where: { id } });
     if (!categoria) throw new NotFoundException(`Categoria ${id} não encontrada`);
     return categoria;
   }
 
   async update(id: number, dto: UpdateCategoriaDto) {
     await this.findOne(id);
-    return this.prisma.categoria.update({ where: { id }, data: dto });
+    return this.prisma.categories.update({ where: { id }, data: dto });
   }
 
   async remove(id: number) {
     await this.findOne(id);
-    const produtos = await this.prisma.produto.count({ where: { categoriaId: id } });
-    if (produtos > 0) throw new ConflictException(`Categoria possui produtos vinculados`);
-    return this.prisma.categoria.delete({ where: { id } });
+    const [produtos, lojas, filhas] = await Promise.all([
+      this.prisma.product.count({ where: { category_id: id } }),
+      this.prisma.stores.count({ where: { category_id: id } }),
+      this.prisma.categories.count({ where : { parent_category_id: id } }),
+    ]); 
+    if (produtos || lojas || filhas) {
+      throw new ConflictException('Categoria possui produtos, lojas ou subcategorias vinculadas');
+    }
+    return this.prisma.categories.delete({ where: { id } });
   }
 }
