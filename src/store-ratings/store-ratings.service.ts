@@ -11,10 +11,10 @@ export class StoreRatingsService {
     return this.prisma.storeRating.create({ data: { ...dto, user_id } });
   }
 
-  findAllByStore(store_id: number) {
+  findAll(storeId?: number) {
     return this.prisma.storeRating.findMany({
-      where: { store_id },
-      include: { comments: true },
+      where: storeId? { store_id: storeId } : undefined,
+      include: { user: { select: { id: true, username: true, profile_picture_url: true } } },
       orderBy: { createdAt: 'desc' },
     });
   }
