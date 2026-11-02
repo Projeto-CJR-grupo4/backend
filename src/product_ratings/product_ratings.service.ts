@@ -21,7 +21,7 @@ findAll() {
 
   async findOne(id: number) {
     const product_rating = await this.prisma.productRatings.findUnique({ where: { id }});
-    if (!product_rating) { throw new NotFoundException(`Produto ${id} não encontrado`); }
+    if (!product_rating) { throw new NotFoundException(`Avaliação ${id} não encontrado`); }
     return product_rating;
   }
 
