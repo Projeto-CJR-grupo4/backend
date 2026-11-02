@@ -8,8 +8,8 @@ export class StoreRatingsController {
   constructor(private readonly storeRatingsService: StoreRatingsService) {}
 
   @Post()
-  create(@Body() createStoreRatingDto: CreateStoreRatingDto) {
-    return this.storeRatingsService.create(createStoreRatingDto);
+  create(@Body() dto: CreateStoreRatingDto) {
+    return this.storeRatingsService.create(dto);
   }
 
   @Get()
