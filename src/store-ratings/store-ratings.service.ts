@@ -1,26 +1,40 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateStoreRatingDto } from './dto/create-store-rating.dto';
 import { UpdateStoreRatingDto } from './dto/update-store-rating.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class StoreRatingsService {
-  create(createStoreRatingDto: CreateStoreRatingDto) {
-    return 'This action adds a new storeRating';
+  constructor(private prisma: PrismaService) {}
+
+  create(user_id: number, dto: CreateStoreRatingDto) {
+    return this.prisma.storeRating.create({ data: { ...dto, user_id } });
   }
 
-  findAll() {
-    return `This action returns all storeRatings`;
+  findAllByStore(store_id: number) {
+    return this.prisma.storeRating.findMany({
+      where: { store_id },
+      include: { comments: true },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} storeRating`;
+  async findOne(id: number) {
+    const rating = await this.prisma.storeRating.findUnique({
+      where: { id },
+      include: { comments: true },
+    });
+    if(!rating) throw new NotFoundException(`Avaliação ${id} não encontrada`);
+    return rating;
   }
 
-  update(id: number, updateStoreRatingDto: UpdateStoreRatingDto) {
-    return `This action updates a #${id} storeRating`;
+  async update(id: number, dto: UpdateStoreRatingDto) {
+    await this.findOne(id);
+    return this.prisma.storeRating.update({ where: { id }, data: dto });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} storeRating`;
+  async remove(id: number) {
+    await this.findOne(id);
+    return this.prisma.storeRating.delete({ where: { id } });
   }
 }
