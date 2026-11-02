@@ -10,18 +10,23 @@ export class ProductRatingsService {
     return this.prisma.productRatings.create({ data: dto });
   }
 
-findAll() {
+findAll(productId?: number) {
   return this.prisma.productRatings.findMany({
+    where: productId ? { product_id: productId } : undefined,
     include: {
       user: { select: { id: true, username: true, name: true, profile_picture_url: true } },
       product: true,
     },
+    orderBy: { createdAt: 'desc' },
   });
 }
 
   async findOne(id: number) {
-    const product_rating = await this.prisma.productRatings.findUnique({ where: { id }});
-    if (!product_rating) { throw new NotFoundException(`Avaliação ${id} não encontrado`); }
+    const product_rating = await this.prisma.productRatings.findUnique({
+      where: { id },
+      include: { comments: true },
+    });
+    if (!product_rating) { throw new NotFoundException(`Avaliação ${id} não encontrada`); }
     return product_rating;
   }
 
