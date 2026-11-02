@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { ProductRatingsService } from './product_ratings.service';
 import { CreateProductRatingDto } from './dto/create-product_rating.dto';
 import { UpdateProductRatingDto } from './dto/update-product_rating.dto';
@@ -13,22 +13,22 @@ export class ProductRatingsController {
   }
 
   @Get()
-  findAll() {
-    return this.productRatingsService.findAll();
+  findAll(@Query('productId', new ParseIntPipe({ optional: true })) productId?: number) {
+    return this.productRatingsService.findAll(productId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productRatingsService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productRatingsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductRatingDto: UpdateProductRatingDto) {
-    return this.productRatingsService.update(+id, updateProductRatingDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateProductRatingDto: UpdateProductRatingDto) {
+    return this.productRatingsService.update(id, updateProductRatingDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productRatingsService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.productRatingsService.remove(id);
   }
 }
