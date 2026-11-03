@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -72,7 +72,7 @@ model Product {
   category_id Int
   name        String
   description String?
-  price       Decimal  @db.Decimal(8, 2)
+  price       Decimal  
   stock       Int
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
