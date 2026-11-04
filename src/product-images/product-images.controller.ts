@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { ProductImagesService } from './product-images.service';
 import { CreateProductImageDto } from './dto/create-product-image.dto';
 import { UpdateProductImageDto } from './dto/update-product-image.dto';
@@ -13,22 +13,25 @@ export class ProductImagesController {
   }
 
   @Get()
-  findAll() {
-    return this.productImagesService.findAll();
+  findAll(
+    @Query('productId', new ParseIntPipe({ optional: true }))
+    productId?: number,
+  ) {
+    return this.productImagesService.findAll(productId);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.productImagesService.findOne(+id);
+  findOne(@Param('id', ParseIntPipe) id: number) {
+    return this.productImagesService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductImageDto: UpdateProductImageDto) {
-    return this.productImagesService.update(+id, updateProductImageDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() updateProductImageDto: UpdateProductImageDto) {
+    return this.productImagesService.update(id, updateProductImageDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productImagesService.remove(+id);
+  remove(@Param('id', ParseIntPipe) id: number) {
+    return this.productImagesService.remove(id);
   }
 }
