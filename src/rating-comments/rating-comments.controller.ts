@@ -3,7 +3,7 @@ import { RatingCommentsService } from './rating-comments.service';
 import { CreateRatingCommentDto } from './dto/create-rating-comment.dto';
 import { UpdateRatingCommentDto } from './dto/update-rating-comment.dto';
 import { StoreRating } from '../store-ratings/entities/store-rating.entity';
-import { ProductRating } from '../product_ratings/entities/product_rating.entity';
+import { ProductRating } from '../product-ratings/entities/product_rating.entity';
 
 @Controller('rating-comments')
 export class RatingCommentsController {
