@@ -13,7 +13,8 @@ import { JwtAuthGuard } from "./auth/guards/jwt-auth.guard";
 import { ProductRatingsModule } from './product-ratings/product_ratings.module';
 import { StoreRatingsModule } from './store-ratings/store-ratings.module';
 import { RatingCommentsModule } from './rating-comments/rating-comments.module';
-import { ProductImageModule } from './product-image/product-image.module';
+import { ProductImageModule } from './product-images/product-image.module';
+import { ProductImagesModule } from './product-images/product-images.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ProductImageModule } from './product-image/product-image.module';
     StoreRatingsModule,
     RatingCommentsModule,
     ProductImageModule,
+    ProductImagesModule,
   ],
   controllers: [AppController],
   providers: [
