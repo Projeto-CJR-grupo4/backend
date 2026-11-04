@@ -1,26 +1,60 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductImageDto } from './dto/create-product-image.dto';
 import { UpdateProductImageDto } from './dto/update-product-image.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class ProductImagesService {
-  create(createProductImageDto: CreateProductImageDto) {
-    return 'This action adds a new productImage';
+  constructor(private prisma: PrismaService) {}
+
+  async create(dto: CreateProductImageDto) {
+    const product = await this.prisma.product.findUnique({
+      where: { id: dto.product_id },
+    });
+    if(!product) throw new NotFoundException('Produto não encontrado');
+
+    let order = dto.order;
+    if(order === undefined) {
+      const last = await this.prisma.productImages.aggregate({
+        where: { product_id: dto.product_id },
+        _max: { order: true },
+      });
+      order = (last._max.order ?? -1) + 1;
+    }
+    return this.prisma.productImages.create({
+      data: {
+        product_id: dto.product_id,
+        image_url: dto.image_url,
+        order,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all productImages`;
+  findAll(productId?: number) {
+    return this.prisma.productImages.findMany({
+      where: productId != null ? { product_id: productId } : undefined,
+      orderBy: [{ product_id: 'asc' }, { order: 'asc' }],
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} productImage`;
+  async findOne(id: number) {
+    const image = await this.prisma.productImages.findUnique({
+      where: { id },
+    });
+    if (!image) throw new NotFoundException('Imagem não encontrada')
+    return image;
   }
 
-  update(id: number, updateProductImageDto: UpdateProductImageDto) {
-    return `This action updates a #${id} productImage`;
+  async update(id: number, dto: UpdateProductImageDto) {
+    await this.findOne(id);
+    return this.prisma.productImages.update({
+      where: { id },
+      data: dto,
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} productImage`;
+  async remove(id: number) {
+    await this.findOne(id);
+    return this.prisma.productImages.delete({ where: { id } });
   }
 }
