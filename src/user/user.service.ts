@@ -19,6 +19,7 @@ export class UserService {
           username: createUserDto.username,
           email: createUserDto.email,
           password_hash: passwordHash,
+          profile_picture_url: createUserDto.profilePictureUrl,
         },
         select: {
           id: true,
