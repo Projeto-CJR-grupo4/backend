@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, IsInt, Min } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsInt, Min, IsUrl } from 'class-validator';
 
 export class CreateLojaDto {
     @IsNotEmpty()
@@ -16,4 +16,16 @@ export class CreateLojaDto {
     @IsInt()
     @Min(1)
     category_id!: number;
+
+    @IsOptional()
+    @IsUrl()
+    logo_url?: string;
+
+    @IsOptional()
+    @IsUrl()
+    banner_url?: string;
+
+    @IsOptional()
+    @IsUrl()
+    sticker_url?: string;
 }
