@@ -18,6 +18,11 @@ export class UserController {
     return this.userService.findAll();
   }
 
+  @Get('me')
+    getMe(@Req() req: { user: { id: number } }) {
+      return this.userService.findOne(req.user.id);
+    }
+
   @Get(':id')
   findOne(
     @Param('id', ParseIntPipe) id: number,
@@ -31,6 +36,7 @@ export class UserController {
 
     return this.userService.findOne(id);
   }
+
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,
