@@ -80,6 +80,7 @@ export class UserService {
           name: updateUserDto.name,
           username: updateUserDto.username,
           email: updateUserDto.email,
+          profile_picture_url: updateUserDto.profilePictureUrl,
         },
         select: {
           id: true,
