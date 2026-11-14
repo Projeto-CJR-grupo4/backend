@@ -10,8 +10,17 @@ export class ProdutosService {
     return this.prisma.product.create({ data: dto });
   }
 
-  findAll() {
-    return this.prisma.product.findMany({ include: { store: true, category: true } });
+  findAll(filters: { storeId?: number; userId?: number }) {
+    return this.prisma.product.findMany({ 
+      where: { 
+        store_id: filters.storeId, 
+        store: filters.userId ? { user_id: filters.userId } : undefined, 
+      },
+      include: { 
+        images: { orderBy: { order: 'asc'} }, 
+        store: { select: {id: true, name: true, logo_url: true} }, 
+        category: true },
+       });
   }
 
   async findOne(id: number) {
