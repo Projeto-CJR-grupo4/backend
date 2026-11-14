@@ -13,8 +13,14 @@ export class StoreRatingsController {
   }
 
   @Get()
-  findAll(@Query('storeId', new ParseIntPipe({ optional: true })) storeId?: number) {
-    return this.storeRatingsService.findAll(storeId);
+  findAll(
+    @Query('storeId')  storeId?: string,
+    @Query('userId') userId?: string,
+  ){
+    return this.storeRatingsService.findAll(
+      storeId ? Number(storeId) : undefined,
+      userId ? Number(userId) : undefined,
+    );
   }
 
   @Get(':id')

@@ -8,7 +8,7 @@ export class CreateStoreRatingDto {
     store_id: number;
 
     @IsInt()
-    @Min(0)
+    @Min(1)
     @Max(5)
     rating: number;
 
