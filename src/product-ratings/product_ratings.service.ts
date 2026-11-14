@@ -10,9 +10,12 @@ export class ProductRatingsService {
     return this.prisma.productRatings.create({ data: dto });
   }
 
-findAll(productId?: number) {
+findAll(productId?: number, userId?: number) {
   return this.prisma.productRatings.findMany({
-    where: productId ? { product_id: productId } : undefined,
+    where: {
+    ...(productId != null && { product_id: productId }),
+    ...(userId != null && { user_id: userId }),
+    },
     include: {
       user: { select: { id: true, username: true, name: true, profile_picture_url: true } },
       product: true,

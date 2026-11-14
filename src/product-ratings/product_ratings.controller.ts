@@ -13,8 +13,14 @@ export class ProductRatingsController {
   }
 
   @Get()
-  findAll(@Query('productId', new ParseIntPipe({ optional: true })) productId?: number) {
-    return this.productRatingsService.findAll(productId);
+  findAll(
+    @Query('productId') productId?: string, 
+    @Query('userId') userId?: string,
+  ) {
+    return this.productRatingsService.findAll(
+      productId ? Number(productId) : undefined,
+      userId ? Number(userId) : undefined,
+    );
   }
 
   @Get(':id')
