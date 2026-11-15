@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query 
 import { ProdutosService } from './produtos.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
+import { IsPublic } from '../auth/decorators/is-public.decorator';
 
 @Controller('produtos')
 export class ProdutosController {
@@ -12,6 +13,7 @@ export class ProdutosController {
     return this.produtosService.create(dto);
   }
 
+  @IsPublic()
   @Get()
   findAll(@Query('storeId') storeId?: string, @Query('userId') userId?: string,) {
     return this.produtosService.findAll({

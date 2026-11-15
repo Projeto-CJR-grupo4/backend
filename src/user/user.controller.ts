@@ -37,6 +37,12 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @IsPublic()
+  @Get(':id/public')
+  findPublic(@Param('id', ParseIntPipe) id: number) {
+    return this.userService.findPublic(id);
+  }
+
   @Patch(':id')
   update(
     @Param('id', ParseIntPipe) id: number,

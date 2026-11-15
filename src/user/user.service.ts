@@ -69,6 +69,22 @@ export class UserService {
     return user;
   }
 
+  async findPublic(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        profile_picture_url: true,
+        createdAt: true,
+      },
+    });
+    if (!user) throw new NotFoundException('Usuário não encontrado');
+    return user;
+  }
+
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
       return await this.prisma.user.update({
