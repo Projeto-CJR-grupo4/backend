@@ -18,7 +18,7 @@ export class StoreRatingsService {
         ...(userId != null && { user_id: userId }),
        },
       include: { 
-        user: { select: { id: true, username: true, profile_picture_url: true } },
+        user: { select: { id: true, name: true, username: true, profile_picture_url: true } },
         store: { select: { id: true, name: true } },
       },
       orderBy: { createdAt: 'desc' },
