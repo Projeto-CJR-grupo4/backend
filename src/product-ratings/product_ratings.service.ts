@@ -18,7 +18,9 @@ findAll(productId?: number, userId?: number) {
     },
     include: {
       user: { select: { id: true, username: true, name: true, profile_picture_url: true } },
-      product: true,
+      product: {
+        include: { store: { select: { id: true, name: true } } },
+      },
     },
     orderBy: { createdAt: 'desc' },
   });
