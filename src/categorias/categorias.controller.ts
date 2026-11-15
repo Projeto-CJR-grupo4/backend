@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from 
 import { CategoriasService } from './categorias.service';
 import { CreateCategoriaDto } from './dto/create-categoria.dto';
 import { UpdateCategoriaDto } from './dto/update-categoria.dto';
-
+import { IsPublic } from '../auth/decorators/is-public.decorator';
 @Controller('categorias')
 export class CategoriasController {
   constructor(private readonly categoriasService: CategoriasService) {}
@@ -12,6 +12,7 @@ export class CategoriasController {
     return this.categoriasService.create(dto);
   }
 
+  @IsPublic()
   @Get()
   findAll() {
     return this.categoriasService.findAll();
