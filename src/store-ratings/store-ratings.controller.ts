@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe 
 import { StoreRatingsService } from './store-ratings.service';
 import { CreateStoreRatingDto } from './dto/create-store-rating.dto';
 import { UpdateStoreRatingDto } from './dto/update-store-rating.dto';
+import { IsPublic } from '../auth/decorators/is-public.decorator';
 
 @Controller('store-ratings')
 export class StoreRatingsController {
@@ -12,9 +13,16 @@ export class StoreRatingsController {
     return this.storeRatingsService.create(dto);
   }
 
+  @IsPublic()
   @Get()
-  findAll(@Query('storeId', new ParseIntPipe({ optional: true })) storeId?: number) {
-    return this.storeRatingsService.findAll(storeId);
+  findAll(
+    @Query('storeId')  storeId?: string,
+    @Query('userId') userId?: string,
+  ){
+    return this.storeRatingsService.findAll(
+      storeId ? Number(storeId) : undefined,
+      userId ? Number(userId) : undefined,
+    );
   }
 
   @Get(':id')

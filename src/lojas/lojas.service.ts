@@ -10,8 +10,11 @@ export class LojasService {
     return this.prisma.stores.create({ data: dto });
   }
 
-  findAll() {
-    return this.prisma.stores.findMany();
+  findAll(userId?: number) {
+    return this.prisma.stores.findMany({
+      where: { user_id: userId },
+      include: { category: { select: { id: true, name: true } } },
+    });
   }
 
   async findOne(id: number) {

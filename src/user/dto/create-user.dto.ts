@@ -1,6 +1,8 @@
 import {
   IsEmail,
+  IsOptional,
   IsString,
+  IsUrl,
   Matches,
   MaxLength,
   MinLength,
@@ -27,4 +29,11 @@ export class CreateUserDto {
     message: 'A senha deve conter letras maiúsculas, minúsculas e pelo menos um número ou símbolo, sem espaços.',
   })
   password: string;
+
+  @IsOptional()
+  @Matches(/^(https?:\/\/.+|\/.+)$/, {
+    message: 'logo_url deve ser uma URL completa ou um caminho começando com /',
+  })
+  @MaxLength(500)
+  profilePictureUrl?: string;
 }

@@ -1,7 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { LojasService } from './lojas.service';
 import { CreateLojaDto } from './dto/create-loja.dto';
 import { UpdateLojaDto } from './dto/update-loja.dto';
+import { IsPublic } from '../auth/decorators/is-public.decorator';
 
 @Controller('lojas')
 export class LojasController {
@@ -12,9 +13,10 @@ export class LojasController {
     return this.lojasService.create(dto);
   }
 
+  @IsPublic()
   @Get()
-  findAll() {
-    return this.lojasService.findAll();
+  findAll(@Query('userId') userId?: string) {
+    return this.lojasService.findAll(userId? Number(userId) : undefined);
   }
 
   @Get(':id')

@@ -1,10 +1,12 @@
-import { IsInt, IsOptional, IsUrl, Min } from "class-validator";
+import { IsInt, IsOptional, IsUrl, Matches, Min } from "class-validator";
 
 export class CreateProductImageDto {
     @IsInt()
     product_id: number;
 
-    @IsUrl({ require_tld: false })
+    @Matches(/^(https?:\/\/.+|\/.+)$/, {
+        message: 'logo_url deve ser uma URL completa ou um caminho começando com /',
+    })
     image_url: string;
 
     @IsOptional()
