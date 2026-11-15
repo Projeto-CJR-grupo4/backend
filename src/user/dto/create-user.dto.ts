@@ -31,7 +31,9 @@ export class CreateUserDto {
   password: string;
 
   @IsOptional()
-  @IsUrl({ require_tld: false })
+  @Matches(/^(https?:\/\/.+|\/.+)$/, {
+    message: 'logo_url deve ser uma URL completa ou um caminho começando com /',
+  })
   @MaxLength(500)
   profilePictureUrl?: string;
 }

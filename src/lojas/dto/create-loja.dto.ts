@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsOptional, IsString, IsInt, Min, IsUrl } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsInt, Min, IsUrl, Matches } from 'class-validator';
 
 export class CreateLojaDto {
     @IsNotEmpty()
@@ -18,14 +18,20 @@ export class CreateLojaDto {
     category_id!: number;
 
     @IsOptional()
-    @IsUrl()
+    @Matches(/^(https?:\/\/.+|\/.+)$/, {
+      message: 'logo_url deve ser uma URL completa ou um caminho começando com /',
+    })
     logo_url?: string;
 
     @IsOptional()
-    @IsUrl()
+    @Matches(/^(https?:\/\/.+|\/.+)$/, {
+      message: 'banner_url deve ser uma URL completa ou um caminho começando com /',
+    })
     banner_url?: string;
 
     @IsOptional()
-    @IsUrl()
+    @Matches(/^(https?:\/\/.+|\/.+)$/, {
+      message: 'sticker_url deve ser uma URL completa ou um caminho começando com /',
+    })
     sticker_url?: string;
 }
