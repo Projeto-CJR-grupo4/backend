@@ -109,7 +109,9 @@ export class UserService {
         },
       });
     } catch (error) {
-
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new ConflictException('Username ou email já está em uso.');
+      }
       throw error;
     }
   }
