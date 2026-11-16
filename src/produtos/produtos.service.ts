@@ -19,7 +19,8 @@ export class ProdutosService {
       include: { 
         images: { orderBy: { order: 'asc'} }, 
         store: { select: {id: true, name: true, logo_url: true} }, 
-        category: true },
+        category: true,
+        productRatings: { select: {rating: true}} },
        });
   }
 
