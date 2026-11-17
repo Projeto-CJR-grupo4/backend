@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @Controller('user')
 export class UserController {
@@ -22,6 +23,16 @@ export class UserController {
     getMe(@Req() req: { user: { id: number } }) {
       return this.userService.findOne(req.user.id);
     }
+
+  @Patch('me')
+  updateMe(@Req() req: { user: { id: number }}, @Body() dto: UpdateUserDto){
+    return this.userService.update(req.user.id, dto);
+  }
+
+  @Delete('me')
+  removeMe(@Req() req: { user: { id: number } }) {
+    return this.userService.remove(req.user.id);
+  }
 
   @Get(':id')
   findOne(
