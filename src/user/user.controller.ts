@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ForbiddenException, Req } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ForbiddenException, Req, UseInterceptors, UploadedFile, BadRequestException } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { avatarUploadOptions } from './avatar-upload.config';
+import type { Request } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -27,6 +29,17 @@ export class UserController {
   @Patch('me')
   updateMe(@Req() req: { user: { id: number }}, @Body() dto: UpdateUserDto){
     return this.userService.update(req.user.id, dto);
+  }
+
+  @Patch('me/avatar')
+  @UseInterceptors(FileInterceptor('file', avatarUploadOptions))
+  updateAvatar(
+    @Req() req: Request & { user: { id: number } },
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if(!file) throw new BadRequestException('Nenhum arquivo enviado.');
+    const url = `${req.protocol}://${req.get('host')}/uploads/avatars/${file.filename}`;
+    return this.userService.updateAvatar(req.user.id, url);
   }
 
   @Delete('me')
