@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProdutoDto } from './dto/create-produto.dto';
 import { UpdateProdutoDto } from './dto/update-produto.dto';
@@ -6,7 +6,15 @@ import { UpdateProdutoDto } from './dto/update-produto.dto';
 @Injectable()
 export class ProdutosService {
   constructor(private prisma: PrismaService) {}
-  create(dto: CreateProdutoDto) {
+
+  private async garantirDono(storeId: number, userId: number) {
+    const loja = await this.prisma.stores.findUnique({ where: { id: storeId }});
+    if (!loja) throw new NotFoundException(`Loja ${storeId} não encontrada`);
+    if (loja.user_id !== userId) throw new ForbiddenException('Só o dono pode gerenciar os produtos');
+  }
+
+  async create(dto: CreateProdutoDto, userId: number) {
+    await this.garantirDono(dto.store_id, userId);
     return this.prisma.product.create({ data: dto });
   }
 
@@ -30,13 +38,47 @@ export class ProdutosService {
     return produto;
   }
  
-  async update(id: number, dto: UpdateProdutoDto) {
-    await this.findOne(id);
+  async update(id: number, dto: UpdateProdutoDto, userId:number) {
+    const product = await this.findOne(id);
+    await this.garantirDono(product.store_id, userId);
+    if (dto.store_id !== undefined) await this.garantirDono(dto.store_id, userId);
     return this.prisma.product.update({ where: { id }, data: dto });
   }
 
-  async remove(id: number) {
-    await this.findOne(id);
+  async remove(id: number, userId: number) {
+    const product = await this.findOne(id);
+    await this.garantirDono(product.store_id, userId);
     return this.prisma.product.delete({ where: { id } });
+  }
+
+  async addImages(id: number, urls: string[], userId: number) {
+    const product = await this.findOne(id);
+    await this.garantirDono(product.store_id, userId);
+    const last = await this.prisma.productImages.aggregate({
+      where: { product_id: id },
+      _max: { order: true },
+    });
+    let ordem = (last._max.order ?? -1) + 1;
+
+    await this.prisma.productImages.createMany({
+      data: urls.map((url) => ({ product_id: id, image_url: url, order: ordem++ })),
+    });
+
+    return this.prisma.productImages.findMany({
+      where: { product_id: id },
+      orderBy: { order: 'asc' },
+    });
+  }
+
+  async removeImage(id: number, imageId: number, userId: number) {
+    const product = await this.findOne(id);
+    await this.garantirDono(product.store_id, userId);
+
+    const image = await this.prisma.productImages.findFirst({
+      where: { id: imageId, product_id: id },
+    });
+    if (!image) throw new NotFoundException(`Imagem ${imageId} não encontrada`);
+
+    return this.prisma.productImages.delete({ where: { id: imageId }});
   }
 }
