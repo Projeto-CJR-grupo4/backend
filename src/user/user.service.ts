@@ -155,4 +155,20 @@ export class UserService {
       },
     });
   }
+
+  updateAvatar(id: number, url: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { profile_picture_url: url },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        profile_picture_url: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+  }
 }
