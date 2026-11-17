@@ -109,7 +109,9 @@ export class UserService {
         },
       });
     } catch (error) {
-
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new ConflictException('Username ou email já está em uso.');
+      }
       throw error;
     }
   }
@@ -150,6 +152,22 @@ export class UserService {
         id: true,
         name: true,
         email: true,
+      },
+    });
+  }
+
+  updateAvatar(id: number, url: string) {
+    return this.prisma.user.update({
+      where: { id },
+      data: { profile_picture_url: url },
+      select: {
+        id: true,
+        name: true,
+        username: true,
+        email: true,
+        profile_picture_url: true,
+        createdAt: true,
+        updatedAt: true,
       },
     });
   }
