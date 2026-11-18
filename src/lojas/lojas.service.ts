@@ -5,9 +5,14 @@ import { UpdateLojaDto } from './dto/update-loja.dto';
 
 @Injectable()
 export class LojasService {
-  constructor(private prisma: PrismaService) {}
-  create(dto: CreateLojaDto) {
-    return this.prisma.stores.create({ data: dto });
+  constructor(private prisma: PrismaService) { }
+  create(dto: CreateLojaDto, usuarioId: number) {
+    return this.prisma.stores.create({
+      data: {
+        ...dto,
+        user_id: usuarioId,
+      },
+    });
   }
 
   findAll(userId?: number) {
@@ -19,7 +24,7 @@ export class LojasService {
 
   async findOne(id: number) {
     const loja = await this.prisma.stores.findUnique({ where: { id }, include: { products: true, category: { select: { name: true } }, user: { select: { id: true, name: true } } } });
-    if (!loja) { throw new NotFoundException(`Loja ${id} não encontrada`);}
+    if (!loja) { throw new NotFoundException(`Loja ${id} não encontrada`); }
     return loja;
   }
 
