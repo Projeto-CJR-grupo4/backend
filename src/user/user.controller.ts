@@ -6,6 +6,7 @@ import { IsPublic } from '../auth/decorators/is-public.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { avatarUploadOptions } from './avatar-upload.config';
 import type { Request } from 'express';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('user')
 export class UserController {
@@ -40,6 +41,14 @@ export class UserController {
     if(!file) throw new BadRequestException('Nenhum arquivo enviado.');
     const url = `${req.protocol}://${req.get('host')}/uploads/avatars/${file.filename}`;
     return this.userService.updateAvatar(req.user.id, url);
+  }
+
+  @Patch('me/password')
+  changePassword(
+    @Req() req: { user: { id: number } },
+    @Body () dto: ChangePasswordDto,
+  ) {
+    return this.userService.changePassword(req.user.id, dto);
   }
 
   @Delete('me')
