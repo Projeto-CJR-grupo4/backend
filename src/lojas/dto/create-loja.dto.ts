@@ -8,11 +8,7 @@ export class CreateLojaDto {
     @IsOptional()
     @IsString()
     description?: string;
-
-    @IsInt()
-    @Min(1)
-    user_id!: number;
-
+    
     @IsInt()
     @Min(1)
     category_id!: number;
