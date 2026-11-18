@@ -8,6 +8,7 @@ const EXTENSOES: Record<string, string> = {
     'image/png': '.png',
     'image/jpeg': '.jpeg',
     'image/webp': '.webp',
+    'image/svg+xml': '.svg',
 };
 
 export const lojaUploadOptions = {
