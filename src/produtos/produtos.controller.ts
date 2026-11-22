@@ -7,11 +7,11 @@ import { UpdateProdutoDto } from './dto/update-produto.dto';
 import { IsPublic } from '../auth/decorators/is-public.decorator';
 import { MAX_IMAGENS_POR_ENVIO, productImagesUploadOptions } from './product-images-upload.config';
 
-type RequisicaoAutenticada = Request & { user: { id: number }};
+type RequisicaoAutenticada = Request & { user: { id: number } };
 
 @Controller('produtos')
 export class ProdutosController {
-  constructor(private readonly produtosService: ProdutosService) {}
+  constructor(private readonly produtosService: ProdutosService) { }
 
   @Post()
   create(@Body() dto: CreateProdutoDto, @Req() req: RequisicaoAutenticada) {
@@ -24,9 +24,10 @@ export class ProdutosController {
     return this.produtosService.findAll({
       storeId: storeId ? Number(storeId) : undefined,
       userId: userId ? Number(userId) : undefined,
-  });
+    });
   }
 
+  @IsPublic()
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.produtosService.findOne(id);
@@ -52,7 +53,7 @@ export class ProdutosController {
   }
 
   @Delete(':id/imagens/:imagemId')
-  removeImage(@Param('id', ParseIntPipe) id:number, @Param('imagemId', ParseIntPipe) imagemId: number, @Req() req: RequisicaoAutenticada) {
+  removeImage(@Param('id', ParseIntPipe) id: number, @Param('imagemId', ParseIntPipe) imagemId: number, @Req() req: RequisicaoAutenticada) {
     return this.produtosService.removeImage(id, imagemId, req.user.id);
   }
 }
