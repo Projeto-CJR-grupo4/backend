@@ -5,10 +5,10 @@ import { UpdateProdutoDto } from './dto/update-produto.dto';
 
 @Injectable()
 export class ProdutosService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   private async garantirDono(storeId: number, userId: number) {
-    const loja = await this.prisma.stores.findUnique({ where: { id: storeId }});
+    const loja = await this.prisma.stores.findUnique({ where: { id: storeId } });
     if (!loja) throw new NotFoundException(`Loja ${storeId} não encontrada`);
     if (loja.user_id !== userId) throw new ForbiddenException('Só o dono pode gerenciar os produtos');
   }
@@ -19,26 +19,53 @@ export class ProdutosService {
   }
 
   findAll(filters: { storeId?: number; userId?: number }) {
-    return this.prisma.product.findMany({ 
-      where: { 
-        store_id: filters.storeId, 
-        store: filters.userId ? { user_id: filters.userId } : undefined, 
+    return this.prisma.product.findMany({
+      where: {
+        store_id: filters.storeId,
+        store: filters.userId ? { user_id: filters.userId } : undefined,
       },
-      include: { 
-        images: { orderBy: { order: 'asc'} }, 
-        store: { select: {id: true, name: true, logo_url: true} }, 
+      include: {
+        images: { orderBy: { order: 'asc' } },
+        store: { select: { id: true, name: true, logo_url: true } },
         category: true,
-        productRatings: { select: {rating: true}} },
-       });
+        productRatings: { select: { rating: true } }
+      },
+    });
   }
 
   async findOne(id: number) {
-    const produto = await this.prisma.product.findUnique({ where: { id } });
-    if (!produto) { throw new NotFoundException(`Produto ${id} não encontrado`); }
+    const produto = await this.prisma.product.findUnique({
+      where: { id },
+      include: {
+        images: {
+          orderBy: { order: 'asc' }
+        },
+        store: {
+          select: {
+            id: true,
+            name: true,
+            logo_url: true,
+            user_id: true,
+            category_id: true
+          }
+        },
+        category: true,
+        productRatings: {
+          select: {
+            rating: true
+          }
+        }
+      }
+    });
+
+    if (!produto) {
+      throw new NotFoundException(`Produto ${id} não encontrado`);
+    }
+
     return produto;
   }
- 
-  async update(id: number, dto: UpdateProdutoDto, userId:number) {
+
+  async update(id: number, dto: UpdateProdutoDto, userId: number) {
     const product = await this.findOne(id);
     await this.garantirDono(product.store_id, userId);
     if (dto.store_id !== undefined) await this.garantirDono(dto.store_id, userId);
@@ -79,6 +106,6 @@ export class ProdutosService {
     });
     if (!image) throw new NotFoundException(`Imagem ${imageId} não encontrada`);
 
-    return this.prisma.productImages.delete({ where: { id: imageId }});
+    return this.prisma.productImages.delete({ where: { id: imageId } });
   }
 }
