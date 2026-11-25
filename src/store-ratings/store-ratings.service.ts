@@ -7,9 +7,14 @@ import { PrismaService } from '../prisma/prisma.service';
 export class StoreRatingsService {
   constructor(private prisma: PrismaService) {}
 
-  create(dto: CreateStoreRatingDto) {
-    return this.prisma.storeRating.create({ data: dto });
-  }
+  create(dto: CreateStoreRatingDto, userId: number) {
+  return this.prisma.storeRating.create({
+    data: {
+      ...dto,
+      user_id: userId
+    }
+  });
+}
 
   findAll(storeId?: number, userId?: number) {
     return this.prisma.storeRating.findMany({

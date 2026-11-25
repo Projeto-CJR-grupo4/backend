@@ -1,18 +1,16 @@
-import { IsInt, IsOptional, IsString, Max, Min } from "class-validator";
+    import { IsInt, IsOptional, IsString, Max, Min } from "class-validator";
 
-export class CreateStoreRatingDto {
-    @IsInt()
-    user_id: number;
+    export class CreateStoreRatingDto {
 
-    @IsInt()
-    store_id: number;
+        @IsInt()
+        store_id: number;
 
-    @IsInt()
-    @Min(1)
-    @Max(5)
-    rating: number;
+        @IsInt()
+        @Min(1)
+        @Max(5)
+        rating: number;
 
-    @IsOptional()
-    @IsString()
-    comment?: string;
-}
+        @IsOptional()
+        @IsString()
+        comment?: string;
+    }
