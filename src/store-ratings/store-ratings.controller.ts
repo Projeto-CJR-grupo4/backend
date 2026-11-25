@@ -10,7 +10,7 @@ type AuthReq = { user: { id: number } };
 
 @Controller('store-ratings')
 export class StoreRatingsController {
-  constructor(private readonly storeRatingsService: StoreRatingsService) {}
+  constructor(private readonly storeRatingsService: StoreRatingsService) { }
 
   @Post()
   create(@Req() req: AuthReq, @Body() dto: CreateStoreRatingDto) {
